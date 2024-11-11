@@ -10,7 +10,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:app_hospital/widget/Buttonwidget.dart';
 import 'package:app_hospital/widget/DialogNotification.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:app_hospital/services/Authservice.dart';
 
+AuthService authService = new AuthService();
 /// {@template Signup}
 /// Signup widget.
 /// {@endtemplate}
@@ -32,9 +34,20 @@ class Signup extends StatefulWidget {
 
 /// State for widget Signup.
 class _SignupState extends State<Signup> {
+  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  bool isUsingEmail = true;
+   void toggleRegisterMethod() {
+    setState(() {
+      isUsingEmail = !isUsingEmail;
+      _emailController.clear();
+      _passwordController.clear();
+      _nameController.clear();
+      _phoneController.clear();
+    });
+  }
   /* #region Lifecycle */
   @override
   void initState() {
@@ -88,7 +101,7 @@ class _SignupState extends State<Signup> {
       print(e);
     }
   }
-
+  
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -135,8 +148,8 @@ class _SignupState extends State<Signup> {
                   ),
                   const SizedBox(height: 20),
                   TextFieldWidget(
-                    textwidget: "Email",
-                    textEditingController: _emailController,
+                    textwidget: isUsingEmail ? "Email" : "Phone Number",
+                    textEditingController:isUsingEmail ? _emailController : _phoneController,
                   ),
                   const SizedBox(height: 20),
                   TextFieldWidget(
@@ -149,7 +162,7 @@ class _SignupState extends State<Signup> {
                     paddinghorizontal: 0.35,
                     paddingvertical: 0.02,
                     onPressed: () {
-                      _Register();
+                      authService.signUpWithEmail(context,_emailController.text,_passwordController.text,_nameController.text);
                     },
                   ),
                   const SizedBox(height: 20),
@@ -185,14 +198,18 @@ class _SignupState extends State<Signup> {
                   ),
                   Container(
                     width: screenWidth * 0.85,
-                    child: Row(
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        GoogleButton(),
+                        GoogleButton(
+                          funtionReturnString: (context, email, password) => authService.signUpWithGoogle(context),
+                            
+                          ),
                         const SizedBox(width: 0),
                         Facebookbutton(),
+                        
                       ],
                     ),
                   )

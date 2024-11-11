@@ -65,7 +65,7 @@ class _Intro2State extends State<Intro2> {
             const SizedBox(height: 10,),
             Text("Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of it over 2000 years old.", textAlign: TextAlign.center,style: GoogleFonts.roboto(fontSize: 14, fontWeight: FontWeight.normal)),
             const SizedBox(height: 30,),
-            Buttonwidget(textbutton: "Get Started",paddinghorizontal: screenWidth * 0.08,paddingvertical: screenHeight * 0.02,onPressed: () => Navigator.pushNamed(context, '/login'),),
+            Buttonwidget(textbutton: "Get Started",paddinghorizontal: screenWidth * 0.08,paddingvertical: screenHeight * 0.02,onPressed: () => Navigator.pushReplacementNamed(context, '/login'),),
           ],
         ),
       )

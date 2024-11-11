@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Facebookbutton extends StatelessWidget {
-  const Facebookbutton({super.key});
+  const Facebookbutton({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {

@@ -2,6 +2,7 @@ class User {
   String uid;
   String name;
   String email;
+  String phoneNumber;
   String password;
   String location;
   String image;
@@ -11,6 +12,7 @@ class User {
     required this.uid,
     required this.name,
     required this.email,
+    required this.phoneNumber,
     required this.password,
     required this.location,
     required this.image,
@@ -21,6 +23,7 @@ class User {
       'uid': uid,
       'name': name,
       'email': email,
+      'phoneNumber': phoneNumber,
       'password': password,
       'location': location,
       'image': image,

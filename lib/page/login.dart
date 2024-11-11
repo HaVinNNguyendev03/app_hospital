@@ -10,6 +10,8 @@ import 'package:app_hospital/widget/Dialogbox.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:app_hospital/widget/Buttonwidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:app_hospital/services/Authservice.dart';
+AuthService authService = new AuthService();
 /// {@template login}
 /// Login widget.
 /// {@endtemplate}
@@ -140,14 +142,17 @@ class _LoginState extends State<Login> {
                     paddinghorizontal: screenWidth * 0.37,
                     paddingvertical: screenHeight * 0.02,
                     onPressed: () {
-                      _Login();
+                      // _Login();
+                      authService.loginWithEmail(context, _emailController.text.trim(), _passwordController.text.trim());
                     },
                   ),
                   const SizedBox(height: 30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      GoogleButton(),
+                      GoogleButton(
+                        funtionReturnString: (context, email, password) => authService.loginWithGoogle(context),
+                      ),
                       const SizedBox(width: 50),
                       Facebookbutton(),
                     ],
