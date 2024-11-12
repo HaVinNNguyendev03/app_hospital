@@ -2,7 +2,7 @@ import 'package:app_hospital/widget/TextFiled.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
-import 'package:app_hospital/widget/Buttonwidget.dart';
+import 'package:app_hospital/widget/ButtonwidgetIntro.dart';
 
 class Dialogbox extends StatefulWidget {
   const Dialogbox(

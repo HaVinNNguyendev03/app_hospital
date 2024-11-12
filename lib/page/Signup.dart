@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:app_hospital/theme.dart';
-import 'package:app_hospital/widget/GoogleButton.dart';
-import 'package:app_hospital/widget/FacebookButton.dart';
+import 'package:app_hospital/widget/WigetButton.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:app_hospital/widget/Buttonwidget.dart';
+import 'package:app_hospital/widget/ButtonwidgetIntro.dart';
 import 'package:app_hospital/widget/DialogNotification.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app_hospital/services/Authservice.dart';
@@ -38,6 +37,12 @@ class _SignupState extends State<Signup> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  var iconbuttongoogle = 'assets/image/icongoogle.png';
+  var iconbuttonfacebook = 'assets/image/iconfacebook.png';
+  var iconbuttonPhone = 'assets/image/iconphone.png';
+  var textbuttongoogle = 'Google';
+  var textbuttonfacebook = 'Facebook';
+  var textbuttonPhone = 'Phone';
   bool isUsingEmail = true;
    void toggleRegisterMethod() {
     setState(() {
@@ -162,9 +167,19 @@ class _SignupState extends State<Signup> {
                     paddinghorizontal: 0.35,
                     paddingvertical: 0.02,
                     onPressed: () {
-                      authService.signUpWithEmail(context,_emailController.text,_passwordController.text,_nameController.text);
+                     isUsingEmail ? authService.signUpWithEmail(context,_emailController.text,_passwordController.text,_nameController.text) : authService.signUpWithEmail(context,_emailController.text,_passwordController.text,_nameController.text) ;
                     },
                   ),
+                  GestureDetector(
+  onTap: toggleRegisterMethod, // Gọi hàm khi nhấn vào đoạn chữ
+  child: Text(
+    isUsingEmail ? "Đăng ký bằng số điện thoại" : "Đăng ký bằng email",
+    style: TextStyle(
+      color: Colors.blue, // Màu chữ để hiển thị như một liên kết
+      decoration: TextDecoration.underline, // Gạch chân để giống liên kết
+    ),
+  ),
+),
                   const SizedBox(height: 20),
                   Container(
                     width: screenWidth * 0.85,
@@ -203,13 +218,22 @@ class _SignupState extends State<Signup> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        GoogleButton(
+                        WidgetButton(
                           funtionReturnString: (context, email, password) => authService.signUpWithGoogle(context),
-                            
+                          iconbutton: iconbuttongoogle,
+                          textbutton: textbuttongoogle,
                           ),
                         const SizedBox(width: 0),
-                        Facebookbutton(),
-                        
+                        WidgetButton(
+                          funtionReturnString: (context, email, password) => authService.signUpWithGoogle(context),
+                          iconbutton: iconbuttonfacebook,
+                          textbutton: textbuttonfacebook,
+                        ),
+                         WidgetButton(
+                          funtionReturnString: (context, email, password) => authService.signUpWithGoogle(context),
+                          iconbutton: iconbuttonPhone,
+                          textbutton: textbuttonPhone,
+                        ),
                       ],
                     ),
                   )

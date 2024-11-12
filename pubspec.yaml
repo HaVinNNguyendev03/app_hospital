@@ -52,6 +52,8 @@ dev_dependencies:
   firebase_auth: ^5.3.1
   google_sign_in: ^6.2.1
   http: ^1.2.2
+  mailer: ^6.2.0
+  cloud_firestore: ^5.4.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -73,6 +75,7 @@ flutter:
     - assets/image/doctorintro2.png
     - assets/image/icongoogle.png
     - assets/image/iconfacebook.png
+    - assets/image/iconphone.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

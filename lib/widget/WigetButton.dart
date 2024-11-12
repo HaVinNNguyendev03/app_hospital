@@ -5,9 +5,10 @@ import 'package:app_hospital/services/Authservice.dart';
 
 AuthService authService = new AuthService();
 
-class GoogleButton extends StatelessWidget {
-  const GoogleButton({super.key, required this.funtionReturnString});
-
+class WidgetButton extends StatelessWidget {
+  const WidgetButton({super.key, required this.funtionReturnString,required this.iconbutton,required this.textbutton});
+  final String iconbutton;
+  final String textbutton;
   final Future<String?> Function(
           BuildContext context, String? email, String? password)
       funtionReturnString;
@@ -32,13 +33,13 @@ class GoogleButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Image.asset(
-            'assets/image/icongoogle.png',
+            iconbutton,
             height: 24,
             width: 24,
           ),
           const SizedBox(width: 10),
           Text(
-            "Google",
+            textbutton,
             style: TextStyle(
               color: Colors.grey.shade700,
               fontSize: 16,

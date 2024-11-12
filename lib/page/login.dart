@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:app_hospital/theme.dart';
-import 'package:app_hospital/widget/GoogleButton.dart';
-import 'package:app_hospital/widget/FacebookButton.dart';
+import 'package:app_hospital/widget/WigetButton.dart';
 import 'package:app_hospital/widget/Dialogbox.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:app_hospital/widget/Buttonwidget.dart';
+import 'package:app_hospital/widget/ButtonwidgetIntro.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app_hospital/services/Authservice.dart';
 AuthService authService = new AuthService();
@@ -147,16 +146,16 @@ class _LoginState extends State<Login> {
                     },
                   ),
                   const SizedBox(height: 30),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GoogleButton(
-                        funtionReturnString: (context, email, password) => authService.loginWithGoogle(context),
-                      ),
-                      const SizedBox(width: 50),
-                      Facebookbutton(),
-                    ],
-                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     GoogleButton(
+                  //       funtionReturnString: (context, email, password) => authService.loginWithGoogle(context),
+                  //     ),
+                  //     const SizedBox(width: 50),
+                  //     Facebookbutton(),
+                  //   ],
+                  // ),
                   Column(
                     children: [
                       TextButton(

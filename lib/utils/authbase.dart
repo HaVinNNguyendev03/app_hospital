@@ -6,4 +6,5 @@ abstract class Authbase {
   Future<String?> signUpWithPhone(String phoneNumber, Function(String) codeSent);
   Future<String?> loginWithGoogle(BuildContext context);
   Future<String?> signUpWithGoogle(BuildContext context);
+  Future<void> sendOtpEmail (String email, String otp); 
 }
