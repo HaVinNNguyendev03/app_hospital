@@ -77,8 +77,7 @@ class AuthService implements Authbase {
         //khởi tạo firebase
         final FirebaseFirestore _firestore = FirebaseFirestore.instance;
         // Tạo mã OTP ngẫu nhiên và thời gian hết hạn
-  String otp = (Random().nextInt(900000) + 100000).toString();
-  DateTime expiryTime = DateTime.now().add(Duration(minutes: 5));
+ 
     try {
         UserCredential userCredential =
         await _firebaseAuth.createUserWithEmailAndPassword(
@@ -88,6 +87,8 @@ class AuthService implements Authbase {
     
     // Lưu các dữ liệu bổ sung vào Firestore với UID là document ID
     User? firebaseUser = userCredential.user;
+     String createotp = (Random().nextInt(900000) + 100000).toString();
+  DateTime expiryTime = DateTime.now().add(Duration(minutes: 5));
     if (firebaseUser != null) {
       UserModel dataUser = UserModel(
         uid: firebaseUser.uid,
@@ -101,21 +102,18 @@ class AuthService implements Authbase {
         isEmailVerified: false,
         isPhoneVerified: false,
         provider: '',
-        otp: otp, 
+        otp: createotp, 
         otpExpiry: expiryTime.millisecondsSinceEpoch,
       );
       await _firestore.collection('Users').doc(firebaseUser.uid).set(dataUser.toMap());
       print("Xác thức OTP");
       // Xac Thuc Otp
-    await sendOtpEmail(email, otp);
+    await sendOtpEmail(email, createotp);
     print("Xác thức OTP 1");
-    await verifyOtp(firebaseUser.uid, otp);
+    await Navigator.pushNamed(context, '/verifyOtp', arguments: {'uid': firebaseUser.uid,});
     print("Xác thức OTP 2");
     }
-    
-      Navigator.pushReplacementNamed(context, '/login', arguments: {
-        // pass data ...
-      });
+    print("Xác thức OTP 3");
       return "Đăng ký thành công!";
     } catch (e) {
       return "Đăng ký thất bại: $e";
@@ -128,9 +126,29 @@ class AuthService implements Authbase {
     try {
       UserCredential userCredential = await _firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
+            // Tìm người dùng trong Firestore bằng email
+    QuerySnapshot userSnapshot = await FirebaseFirestore.instance
+        .collection('Users')
+        .where('email', isEqualTo: email)
+        .limit(1)  // Chỉ cần lấy một kết quả
+        .get();
+
+    if (userSnapshot.docs.isEmpty) {
+      return "Không tìm thấy người dùng với email này.";
+    }
+
+    // Lấy tài liệu người dùng từ snapshot
+    DocumentSnapshot userDoc = userSnapshot.docs.first;
+
+    // Kiểm tra xem người dùng có xác minh email chưa
+    bool isEmailVerified = userDoc.get('isEmailVerified') ?? false;
+
+    if (!isEmailVerified) {
+      return "Email chưa được xác minh. Vui lòng xác minh email trước khi đăng nhập.";
+    }
       Navigator.pushReplacementNamed(context, '/homepage', arguments: {
-        'email': userCredential.user?.email,
-        'name': userCredential.user?.displayName ?? "No Name",
+        'email': userDoc.get('email'),
+        'name': userDoc.get('name'),
       });
       return "Đăng nhập Email thành công!";
     } catch (e) {
@@ -178,15 +196,14 @@ class AuthService implements Authbase {
 
   @override
   Future<String?> sendOtpEmail(String email, String otp) async {
-    String username = 'cgpt87043@gmail.com';
-    String password = 'havinnguyen2003';
+    String username = 'nguyenvanphucdev03@gmail.com';
+    String password = 'ccicbyicrntqzulb';
     final smtpServer = gmail(username, password);
     final message = Message()
       ..from = Address(username, 'App Hospital')
       ..recipients.add(email)
       ..subject = 'Test Dart Mailer library :: 😀 :: ${DateTime.now()}'
-      ..text = 'Ma OTP : $otp'
-      ..html = "<h1>Test</h1>\n<p>Hey! Here's some HTML content</p>";
+      ..html = "<h1>Mã OTP của bạn là: $otp</h1>\n<p>Hey! Here's some HTML content</p>";
     try {
       final sendReport = await send(message, smtpServer);
       print('Message sent: ' + sendReport.toString());
@@ -200,13 +217,13 @@ class AuthService implements Authbase {
   Future<bool> verifyOtp(String uid, String otpInput) async {
   // Lấy thông tin người dùng từ cơ sở dữ liệu
   DocumentSnapshot userSnapshot =
-      await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      await FirebaseFirestore.instance.collection('Users').doc(uid).get();
       UserModel user = UserModel.fromMap(userSnapshot.data() as Map<String, dynamic>);
 
   // Kiểm tra OTP và thời gian hết hạn
   if (user.otp == otpInput && user.otpExpiry != null && DateTime.fromMillisecondsSinceEpoch(user.otpExpiry!).isAfter(DateTime.now())) {
     // Xóa OTP sau khi xác minh thành công
-    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+    await FirebaseFirestore.instance.collection('Users').doc(uid).update({
       'otp': null,
       'otpExpiry': null,
       'isEmailVerified': true, // Đánh dấu email đã được xác minh

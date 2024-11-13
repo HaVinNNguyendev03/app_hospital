@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:developer';
 import 'package:app_hospital/widget/TextFiled.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:app_hospital/widget/ButtonwidgetIntro.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app_hospital/services/Authservice.dart';
+
 AuthService authService = new AuthService();
+
 /// {@template login}
 /// Login widget.
 /// {@endtemplate}
@@ -32,12 +35,21 @@ class Login extends StatefulWidget {
 
 /// State for widget Login.
 class _LoginState extends State<Login> {
-  final TextEditingController _emailController  = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+   final TextEditingController _phoneController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool isUsingEmail = true;
+   void toggleRegisterMethod() {
+    setState(() {
+      isUsingEmail = !isUsingEmail;
+      _emailController.clear();
+      _passwordController.clear();
+      _phoneController.clear();
+    });
+  }
   /* #region Lifecycle */
   @override
-
   void initState() {
     super.initState();
     // Initial state initialization
@@ -61,10 +73,11 @@ class _LoginState extends State<Login> {
     // Permanent removal of a tree stent
     super.dispose();
   }
+  
   /* #endregion */
   Future<void> _Login() async {
     try {
-       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
@@ -74,7 +87,7 @@ class _LoginState extends State<Login> {
         'name': userCredential.user?.displayName ?? "No Name",
       });
     } catch (e) {
-       showDialog(
+      showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: Text("Login Failed"),
@@ -87,8 +100,9 @@ class _LoginState extends State<Login> {
           ],
         ),
       );
-    } 
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -132,17 +146,48 @@ class _LoginState extends State<Login> {
                     style: GoogleFonts.roboto(fontSize: 16),
                   ),
                   const SizedBox(height: 20),
-                  TextFieldWidget(textwidget: "Email",textEditingController: _emailController,),
+                  TextFieldWidget(
+                    textwidget: isUsingEmail ? "Email" : "Phone Number",
+                    textEditingController: isUsingEmail ? _emailController : _phoneController,
+                  ),
                   const SizedBox(height: 20),
-                  TextFieldWidget(textwidget: "Password", textEditingController: _passwordController,),
+                  TextFieldWidget(
+                    textwidget: "Password",
+                    textEditingController: _passwordController,
+                  ),
+                  const SizedBox(height: 20),
+                  GestureDetector(
+                    onTap:
+                        toggleRegisterMethod, // Gọi hàm khi nhấn vào đoạn chữ
+                    child: Text(
+                      isUsingEmail
+                          ? "Đăng ký bằng số điện thoại"
+                          : "Đăng ký bằng email",
+                      style: TextStyle(
+                        color:
+                            Colors.blue, // Màu chữ để hiển thị như một liên kết
+                        decoration: TextDecoration
+                            .underline, // Gạch chân để giống liên kết
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 20),
                   Buttonwidget(
                     textbutton: "Login",
                     paddinghorizontal: screenWidth * 0.37,
                     paddingvertical: screenHeight * 0.02,
                     onPressed: () {
-                      // _Login();
-                      authService.loginWithEmail(context, _emailController.text.trim(), _passwordController.text.trim());
+                      isUsingEmail ? 
+                      authService.loginWithEmail(
+                          context,
+                          _emailController.text.trim(),
+                          _passwordController.text.trim())
+                      :
+                       authService.loginWithEmail(
+                          context,
+                          _emailController.text.trim(),
+                          _passwordController.text.trim())
+                      ;
                     },
                   ),
                   const SizedBox(height: 30),
@@ -160,13 +205,20 @@ class _LoginState extends State<Login> {
                     children: [
                       TextButton(
                         onPressed: () {
-                         showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => FractionallySizedBox(
-        child:  Dialogbox(content: 'Enter your email for the verification proccesss,we will send 4 digits code to your email.',labeltext: 'Email',title: 'Forgot Password',screenHeight: screenHeight,screenWidth: screenWidth,),
-      ),
-    );
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => FractionallySizedBox(
+                              child: Dialogbox(
+                                content:
+                                    'Enter your email for the verification proccesss,we will send 4 digits code to your email.',
+                                labeltext: 'Email',
+                                title: 'Forgot Password',
+                                screenHeight: screenHeight,
+                                screenWidth: screenWidth,
+                              ),
+                            ),
+                          );
                         },
                         child: Text(
                           "Forgot Password?",

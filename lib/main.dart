@@ -7,6 +7,8 @@ import 'package:app_hospital/page/home.dart';
 import 'package:app_hospital/page/intro1.dart';
 import 'package:app_hospital/page/login.dart';
 import 'package:app_hospital/page/Signup.dart';
+import 'package:app_hospital/page/verifyOtp.dart';
+import 'package:app_hospital/page/success.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +36,8 @@ class MyApp extends StatelessWidget {
         '/login': (context) => Login(),
         '/signup': (context) => Signup(),
         '/homepage': (context) => Home(),
+        '/verifyOtp': (context) => verifyOtp(),
+        '/success': (context) => Success(),
       },
        theme: AppTheme.themeData,
        home: Intro1(),
