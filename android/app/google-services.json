@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "544104418258",
+    "project_id": "apphospital-36ae4",
+    "storage_bucket": "apphospital-36ae4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:544104418258:android:63e4b8849757771062160b",
+        "android_client_info": {
+          "package_name": "com.example.app_hospital"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "544104418258-1mdkd4jote87c2gpon89js3a33tfd3uf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.app_hospital",
+            "certificate_hash": "f5fc0bb3ae9895bb277119c4a2ebdb3c8f387885"
+          }
+        },
+        {
+          "client_id": "544104418258-ik8c2oggubg1bisjjuou6bhkkqoibh8q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLx2503rKIiUmEaO9LvT4v1pAmJeGZKds"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "544104418258-8gs8uolb29m9b9etgmb14ngtea198op8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "544104418258-a1l11p4c2mb79hkboeg9ggosk270l104.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.appHospital"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
