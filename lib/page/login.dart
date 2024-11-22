@@ -230,17 +230,32 @@ class _LoginState extends State<Login> {
                       ),
                       TextButton(
                         onPressed: () {
-                          // Thực hiện điều hướng tới màn hình Forgot Password hoặc xử lý reset password
+                          // Thực hiện điều hướng tới màn hình đăng ký
                           Navigator.pushNamed(context, '/signup');
                         },
                         child: Text(
-                          "Don't have an account? Join us",
+                          "Bạn chưa có tài khoản,đăng ký ngay",
+                          style: TextStyle(
+                            color: Colors.blue, // Màu sắc cho chữ
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      TextButton(
+                        onPressed: () {
+                          // Thực hiện điều hướng tới màn hình đăng ký
+                          Navigator.pushNamed(context, '/doctorsigup');
+                        },
+                        child: Text(
+                          "Đăng Ký Với Vai Trò Là Bác Sĩ",
                           style: TextStyle(
                             color: Colors.blue, // Màu sắc cho chữ
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       )
+                      
                     ],
                   )
                 ],

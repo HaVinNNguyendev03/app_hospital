@@ -1,3 +1,4 @@
+import 'package:app_hospital/page/DoctorSignup.dart';
 import 'package:app_hospital/page/intro2.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,8 +14,8 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Future.delayed(const Duration(seconds: 5));
-   await dotenv.load(fileName: ".env");
+   await Future.delayed(const Duration(seconds: 5)); 
+   await dotenv.load(fileName: ".env"); // đợi load file .env
   FlutterNativeSplash.remove();
   try {
     await Firebase.initializeApp();
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         '/homepage': (context) => Home(),
         '/verifyOtp': (context) => verifyOtp(),
         '/success': (context) => Success(),
+        '/doctorsigup'  : (context) => DoctorSignup(),
       },
        theme: AppTheme.themeData,
        home: Intro1(),

@@ -14,6 +14,7 @@ class _verifyOtpState extends State<verifyOtp> {
   String? verificationId;
   String? phone;
   String? email;
+  int? role;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -24,6 +25,7 @@ class _verifyOtpState extends State<verifyOtp> {
       verificationId = args['verificationId'];
       phone = args['phoneNumber'];
       email = args['email'];
+      role = args['role'];
     }
      _isDataInitialized = true; // Đánh dấu đã xử lý,để trách việc rebuil lại widget verifyOtp
   }
@@ -105,11 +107,19 @@ class _verifyOtpState extends State<verifyOtp> {
                       onPressed: () async{
                         String otpString = otp.join(); 
                          bool isVerified = false;
-                        if(email != null){
-                           isVerified = await authService.verifyOtp(uid!, otpString);
+                         if(role == 1){
+                            if(email != null){
+                           isVerified = await authService.verifyOtp(uid!, otpString,'Users');
                         } else{
                            isVerified = await authService.verifyOtpPhone(context, uid!, otpString,verificationId!,phone!);
                         }
+                         } else if (role == 2){
+                           if(email != null){
+                           isVerified = await authService.verifyOtp(uid!, otpString, 'Doctors');
+                        } else{
+                           isVerified = await authService.verifyOtpPhone(context, uid!, otpString,verificationId!,phone!);
+                        }
+                         }
                         if (isVerified) {
                     // OTP verified successfully
                     await Navigator.pushNamedAndRemoveUntil(context, '/success', (route) => false);

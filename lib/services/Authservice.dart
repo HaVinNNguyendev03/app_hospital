@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app_hospital/model/Doctor.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:app_hospital/utils/authbase.dart';
@@ -41,6 +42,36 @@ class AuthService implements Authbase {
   /// Returns a string error if the sign up process fails.
   ///
   Future<String?> signUpWithGoogle(BuildContext context) async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        return "Người dùng đã hủy quá trình đăng nhập Google.";
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      UserCredential userCredential =
+          await _firebaseAuth.signInWithCredential(credential);
+
+      if (userCredential.additionalUserInfo?.isNewUser == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Đăng ký Google thành công!")),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("tai khoan da ton tai!")),
+        );
+      }
+    } catch (e) {
+      return "Đăng ký Google thất bại: $e";
+    }
+  }
+  Future<String?> signUpWithGoogleDoctor(BuildContext context) async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
@@ -150,6 +181,7 @@ class AuthService implements Authbase {
           'email': email,
           'name': name,
           'phoneNumber': null,
+          'role': 1
         });
         print("Xác thức OTP 2");
       }
@@ -167,7 +199,71 @@ class AuthService implements Authbase {
       }
     }
   }
-
+   Future<String?> signUpWithEmailDoctor(
+      BuildContext context, String email, String password, String name, String specialization, int experience, String hospital, String bio) async {
+    //khởi tạo firebase
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    // Tạo mã OTP ngẫu nhiên và thời gian hết hạn
+    try {
+      UserCredential userCredential =
+          await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      // Lưu các dữ liệu bổ sung vào Firestore với UID là document ID
+      User? firebaseDoctor = userCredential.user;
+      String createotp = (Random().nextInt(900000) + 100000).toString();
+      DateTime expiryTime = DateTime.now().add(Duration(minutes: 5));
+      if (firebaseDoctor != null) {
+        DoctorModel dataDoctor = DoctorModel(
+          uid: firebaseDoctor.uid,
+          name: name,
+          email: email,
+          phoneNumber: '',
+          password: password,
+          location: '',
+          image: '',
+          role: 2,
+          isEmailVerified: false,
+          isPhoneVerified: false,
+          provider: '',
+          otp: createotp,
+          otpExpiry: expiryTime.millisecondsSinceEpoch,
+          specialization : specialization,
+          experience : experience,
+          hospital : hospital,
+          bio : bio
+        );
+        await _firestore
+            .collection('Doctors')
+            .doc(firebaseDoctor.uid)
+            .set(dataDoctor.toMap());
+        // Xac Thuc Otp
+        await sendOtpEmail(email, createotp);
+        print("Xác thức OTP 1");
+        await Navigator.pushNamed(context, '/verifyOtp', arguments: {
+          'uid': firebaseDoctor.uid,
+          'email': email,
+          'name': name,
+          'phoneNumber': null,
+          'role': 2
+        });
+        print("Xác thức OTP 2");
+      }
+      print("Xác thức OTP 3");
+      return "Đăng ký thành công!";
+    } on FirebaseAuthException catch (e) {
+      if (e.code == "email-already-in-use") {
+        // thông báo email đã tồn tại
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Email đã được sử dụng"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
   @override
 
   /// Đăng nhập bằng email.
@@ -180,39 +276,69 @@ class AuthService implements Authbase {
   ///
   /// Ngoài ra, còn trả về một thông báo nếu người dùng chưa xác minh email.
   Future<String?> loginWithEmail(
-      BuildContext context, String email, String password) async {
-    try {
-      UserCredential userCredential = await _firebaseAuth
-          .signInWithEmailAndPassword(email: email, password: password);
-      // Tìm người dùng trong Firestore bằng email
-      QuerySnapshot userSnapshot = await FirebaseFirestore.instance
-          .collection('Users')
+    BuildContext context, String email, String password) async {
+  try {
+    // Đăng nhập Firebase
+    UserCredential userCredential = await _firebaseAuth
+        .signInWithEmailAndPassword(email: email, password: password);
+
+    // Tìm trong `Users` collection
+    QuerySnapshot userSnapshot = await FirebaseFirestore.instance
+        .collection('Users') // Chỉ truy vấn `Users`
+        .where('email', isEqualTo: email)
+        .limit(1)
+        .get();
+
+    if (userSnapshot.docs.isEmpty) {
+      // Nếu không tìm thấy trong `Users`, tìm trong `Doctors`
+      QuerySnapshot doctorSnapshot = await FirebaseFirestore.instance
+          .collection('Doctors')
           .where('email', isEqualTo: email)
-          .limit(1) // Chỉ cần lấy một kết quả
+          .limit(1)
           .get();
 
-      if (userSnapshot.docs.isEmpty) {
-        return "Không tìm thấy người dùng với email này.";
+      if (doctorSnapshot.docs.isEmpty) {
+        return "Không tìm thấy tài khoản. Vui lòng kiểm tra email.";
       }
 
-      // Lấy tài liệu người dùng từ snapshot
-      DocumentSnapshot userDoc = userSnapshot.docs.first;
-
-      // Kiểm tra xem người dùng có xác minh email chưa
-      bool isEmailVerified = userDoc.get('isEmailVerified') ?? false;
+      // Xử lý thông tin người dùng trong `Doctors`
+      DocumentSnapshot doctorDoc = doctorSnapshot.docs.first;
+      bool isEmailVerified = doctorDoc.get('isEmailVerified') ?? false;
 
       if (!isEmailVerified) {
         return "Email chưa được xác minh. Vui lòng xác minh email trước khi đăng nhập.";
       }
+
+      // Chuyển hướng tới trang dành cho bác sĩ
       Navigator.pushReplacementNamed(context, '/homepage', arguments: {
-        'email': userDoc.get('email'),
-        'name': userDoc.get('name'),
+        'email': doctorDoc.get('email'),
+        'name': doctorDoc.get('name'),
+        'specialization': doctorDoc.get('specialization'),
+        'experience': doctorDoc.get('experience'),
       });
-      return "Đăng nhập Email thành công!";
-    } catch (e) {
-      return "Đăng nhập Email thất bại: $e";
+      return null; // Thành công
     }
+
+    // Xử lý thông tin người dùng trong `Users`
+    DocumentSnapshot userDoc = userSnapshot.docs.first;
+    bool isEmailVerified = userDoc.get('isEmailVerified') ?? false;
+
+    if (!isEmailVerified) {
+      return "Email chưa được xác minh. Vui lòng xác minh email trước khi đăng nhập.";
+    }
+
+    // Chuyển hướng tới trang dành cho người dùng
+    Navigator.pushReplacementNamed(context, '/homepage', arguments: {
+      'email': userDoc.get('email'),
+      'name': userDoc.get('name'),
+    });
+    return null; // Thành công
+  } catch (e) {
+    return "Đăng nhập Email thất bại: $e";
   }
+}
+
+
 
   @override
   Future<String?> signUpWithPhone(
@@ -360,7 +486,7 @@ class AuthService implements Authbase {
     final message = Message()
       ..from = Address(username, 'App Hospital')
       ..recipients.add(email)
-      ..subject = 'Test Dart Mailer library :: 😀 :: ${DateTime.now()}'
+      ..subject = 'App Hospital Gửi Mã OTP :: 😀 :: ${DateTime.now()}'
       ..html =
           "<h1>Mã OTP của bạn là: $otp</h1>\n<p>Hey! Here's some HTML content</p>";
     try {
@@ -374,19 +500,30 @@ class AuthService implements Authbase {
     }
   }
 
-  Future<bool> verifyOtp(String uid, String otpInput) async {
-    // Lấy thông tin người dùng từ cơ sở dữ liệu
+  Future<bool> verifyOtp(String uid, String otpInput, String collectionName) async {
+  try {
+    // Lấy thông tin người dùng từ cơ sở dữ liệu dựa trên collection (Users hoặc Doctors)
     DocumentSnapshot userSnapshot =
-        await FirebaseFirestore.instance.collection('Users').doc(uid).get();
-    UserModel user =
-        UserModel.fromMap(userSnapshot.data() as Map<String, dynamic>);
+        await FirebaseFirestore.instance.collection(collectionName).doc(uid).get();
+    
+    if (!userSnapshot.exists) {
+      print("Document not found in collection $collectionName");
+      return false;
+    }
+    // Chuyển đổi dữ liệu Map<String, dynamic> sang dạng Model đã khai báo trong model
+    dynamic model;
+    if(collectionName == "Users"){
+       model = UserModel.fromMap(userSnapshot.data() as Map<String, dynamic>);
+    } else if(collectionName == "Doctors"){
+       model = DoctorModel.fromMap(userSnapshot.data() as Map<String, dynamic>);
+    }
     // Kiểm tra OTP và thời gian hết hạn
-    if (user.otp == otpInput &&
-        user.otpExpiry != null &&
-        DateTime.fromMillisecondsSinceEpoch(user.otpExpiry!)
+    if (model.otp == otpInput &&
+        model.otpExpiry != null &&
+        DateTime.fromMillisecondsSinceEpoch(model.otpExpiry!)
             .isAfter(DateTime.now())) {
-      // Xóa OTP sau khi xác minh thành công
-      await FirebaseFirestore.instance.collection('Users').doc(uid).update({
+      // Xóa OTP sau khi xác minh thành công và cập nhật trạng thái xác thực
+      await FirebaseFirestore.instance.collection(collectionName).doc(uid).update({
         'otp': null,
         'otpExpiry': null,
         'isEmailVerified': true, // Đánh dấu email đã được xác minh
@@ -395,7 +532,12 @@ class AuthService implements Authbase {
     } else {
       return false;
     }
+  } catch (e) {
+    print("Error verifying OTP: $e");
+    return false;
   }
+}
+
 
   Future<bool> verifyOtpPhone(BuildContext context, String verificationId,
       String otp, String phone, String uid) async {
