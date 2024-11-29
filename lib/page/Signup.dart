@@ -163,9 +163,12 @@ class _SignupState extends State<Signup> {
                   ),
                   const SizedBox(height: 20),
                   Buttonwidget(
+
                     textbutton: "Sign Up",
                     paddinghorizontal: 0.35,
                     paddingvertical: 0.02,
+                    height: screenHeight * 0.07,
+                    width: screenWidth * 0.85,
                     onPressed: () {
                      isUsingEmail ? authService.signUpWithEmail(context,_emailController.text,_passwordController.text,_nameController.text) : authService.signUpWithPhone(context,_phoneController.text,_passwordController.text,_nameController.text) ;
                     },
@@ -213,6 +216,7 @@ class _SignupState extends State<Signup> {
                   ),
                   Container(
                     width: screenWidth * 0.85,
+                    height: screenHeight * 0.22,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -222,17 +226,19 @@ class _SignupState extends State<Signup> {
                           funtionReturnString: (context, email, password) => authService.signUpWithGoogle(context),
                           iconbutton: iconbuttongoogle,
                           textbutton: textbuttongoogle,
+                           width: screenWidth * 0.85,
                           ),
-                        const SizedBox(width: 0),
                         WidgetButton(
                           funtionReturnString: (context, email, password) => authService.signUpWithGoogle(context),
                           iconbutton: iconbuttonfacebook,
                           textbutton: textbuttonfacebook,
+                           width: screenWidth * 0.85,
                         ),
                          WidgetButton(
                           funtionReturnString: (context, email, password) => authService.signUpWithGoogle(context),
                           iconbutton: iconbuttonPhone,
                           textbutton: textbuttonPhone,
+                           width: screenWidth * 0.85,
                         ),
                       ],
                     ),

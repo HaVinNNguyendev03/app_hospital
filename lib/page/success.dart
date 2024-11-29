@@ -4,6 +4,8 @@ import 'package:app_hospital/theme.dart';
 class Success extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+     final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
          decoration: BoxDecoration(
@@ -40,6 +42,8 @@ class Success extends StatelessWidget {
                 textbutton: "Trở Lại Đăng Nhập",
                 paddinghorizontal: 0.35,
                 paddingvertical: 0.02,
+                height: screenHeight * 0.07,
+                width: screenWidth * 0.5,
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/login');
                 },

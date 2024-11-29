@@ -13,7 +13,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app_hospital/services/Authservice.dart';
 
 AuthService authService = new AuthService();
-
+  var iconbuttongoogle = 'assets/image/icongoogle.png';
+  var iconbuttonfacebook = 'assets/image/iconfacebook.png';
+  var iconbuttonPhone = 'assets/image/iconphone.png';
+  var textbuttongoogle = 'Google';
+  var textbuttonfacebook = 'Facebook';
+  var textbuttonPhone = 'Phone';
 /// {@template login}
 /// Login widget.
 /// {@endtemplate}
@@ -176,6 +181,8 @@ class _LoginState extends State<Login> {
                     textbutton: "Login",
                     paddinghorizontal: screenWidth * 0.37,
                     paddingvertical: screenHeight * 0.02,
+                    height: screenHeight * 0.07,
+                    width: screenWidth * 0.85,
                     onPressed: () {
                       isUsingEmail ? 
                       authService.loginWithEmail(
@@ -190,7 +197,7 @@ class _LoginState extends State<Login> {
                       ;
                     },
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 5),
                   // Row(
                   //   mainAxisAlignment: MainAxisAlignment.center,
                   //   children: [
@@ -229,6 +236,7 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       TextButton(
+                        
                         onPressed: () {
                           // Thực hiện điều hướng tới màn hình đăng ký
                           Navigator.pushNamed(context, '/signup');
@@ -241,7 +249,7 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: 5),
                       TextButton(
                         onPressed: () {
                           // Thực hiện điều hướng tới màn hình đăng ký
@@ -254,8 +262,38 @@ class _LoginState extends State<Login> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      )
-                      
+                      ),
+                      Container(
+                    width: screenWidth * 0.85,
+                    height: screenHeight * 0.22,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        WidgetButton(
+                          funtionReturnString: (context, email, password) => authService.loginWithGoogle(context),
+                          iconbutton: iconbuttongoogle,
+                          textbutton: textbuttongoogle,
+                          width: screenWidth * 0.85,
+                          ),
+                        const SizedBox(width: 5),
+                        WidgetButton(
+                          funtionReturnString: (context, email, password) => authService.signUpWithGoogle(context),
+                          iconbutton: iconbuttonfacebook,
+                          textbutton: textbuttonfacebook,
+                           width: screenWidth * 0.85,
+                        ),
+                         const SizedBox(width: 5),
+                         WidgetButton(
+                          funtionReturnString: (context, email, password) => authService.signUpWithGoogle(context),
+                          iconbutton: iconbuttonPhone,
+                          textbutton: textbuttonPhone,
+                           width: screenWidth * 0.85,
+                        ),
+                      ],
+                    ),
+                  )
                     ],
                   )
                 ],

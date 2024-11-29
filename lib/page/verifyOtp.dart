@@ -36,6 +36,7 @@ class _verifyOtpState extends State<verifyOtp> {
     });
   }
   Widget _buildOTPField(int index) {
+    
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 1.0),
@@ -75,6 +76,8 @@ class _verifyOtpState extends State<verifyOtp> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -104,6 +107,8 @@ class _verifyOtpState extends State<verifyOtp> {
                       textbutton: "Sign Up",
                       paddinghorizontal: 0.35,
                       paddingvertical: 0.02,
+                      height: screenHeight * 0.07,
+                      width: screenWidth * 0.3,
                       onPressed: () async{
                         String otpString = otp.join(); 
                          bool isVerified = false;

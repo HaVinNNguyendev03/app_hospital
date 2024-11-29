@@ -62,6 +62,7 @@ class AuthService implements Authbase {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Đăng ký Google thành công!")),
         );
+        Navigator.pushReplacementNamed(context, '/login');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("tai khoan da ton tai!")),
@@ -92,6 +93,7 @@ class AuthService implements Authbase {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Đăng ký Google thành công!")),
         );
+        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("tai khoan da ton tai!")),
@@ -135,14 +137,13 @@ class AuthService implements Authbase {
       });
     } catch (e) {}
   }
-
+  // fake data otp
   @override
   Future<String?> signUpWithEmail(
       BuildContext context, String email, String password, String name) async {
     //khởi tạo firebase
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     // Tạo mã OTP ngẫu nhiên và thời gian hết hạn
-
     try {
       UserCredential userCredential =
           await _firebaseAuth.createUserWithEmailAndPassword(
@@ -441,7 +442,6 @@ class AuthService implements Authbase {
       // Xác thực người dùng
       UserCredential userCredential =
           await _auth.signInWithCredential(credential);
-
       if (userCredential.user != null) {
         print("Xác thực thành công: ${userCredential.user!.phoneNumber}");
         return true;

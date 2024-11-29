@@ -156,6 +156,8 @@ class _DoctorSignupState extends State<DoctorSignup> {
                     textbutton: "Sign Up",
                     paddinghorizontal: 0.35,
                     paddingvertical: 0.02,
+                    height: screenHeight * 0.1,
+                    width: screenWidth * 0.1,
                     onPressed:() { 
                       authService.signUpWithEmailDoctor(context, _emailController.text, _passwordController.text, _nameController.text, _specializationController.text, int.parse(_experienceController.text) , _hospitalController.text, _bioController.text 
                       ); },

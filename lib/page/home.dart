@@ -5,6 +5,10 @@ import 'package:meta/meta.dart';
 import 'package:app_hospital/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:app_hospital/services/Authservice.dart';
+import 'package:app_hospital/page/homescreen.dart';
+import 'package:app_hospital/page/favoriteScreen.dart';
+import 'package:app_hospital/page/bookScreen.dart';
+import 'package:app_hospital/page/userScreen.dart';
 
 AuthService authService = new AuthService();
 
@@ -31,6 +35,14 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   /* #region Lifecycle */
   late FocusNode myFocusNode;
+  int _selectedIndex = 0;
+  // danh sach cac man hinh
+final List<Widget> _screens = [
+  Homescreen(), 
+  FavoriteScreen(),
+  BookScreen(),
+  UserScreen(),
+];
   @override
   void initState() {
     super.initState();
@@ -60,9 +72,9 @@ class _HomeState extends State<Home> {
   }
 
   /* #endregion */
-  int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
+    //khai bao bien kick thuoc,thuoc tinh man hinh
     final double appBarHeight = AppBar().preferredSize.height;
     print(appBarHeight);
     final screenHeight = MediaQuery.of(context).size.height;
@@ -133,271 +145,12 @@ class _HomeState extends State<Home> {
             ),
           ),
         ),
-        body: GestureDetector(
-          onTap: () => myFocusNode.unfocus(),
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            height: screenHeight,
-            width: screenWidth,
-            decoration: BoxDecoration(
-              gradient: AppTheme.backgroundGradient,
-            ),
-            child: ListView(children: <Widget>[
-              // thanh tim kiem
-              Padding(
-                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: TextField(
-                      focusNode: myFocusNode,
-                      decoration: InputDecoration(
-                        hintText: 'Tìm kiếm...',
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      onChanged: (query) {
-                        // Xử lý logic tìm kiếm
-                        print("Search query: $query");
-                      },
-                    ),
-                  ),
-                ),
-              ),
-              // danh muc loai bac si
-              Container(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        //danh muc bac si mat
-                        CategoryWidget(
-                          backgroundColor:
-                              const Color.fromARGB(255, 21, 0, 255),
-                          imagePath: 'assets/image/Mat.png',
-                          text: 'Mắt',
-                          textColor: Colors.white,
-                        ),
-                        SizedBox(width: 10),
-                        //danh muc bac si tim
-                        CategoryWidget(
-                          backgroundColor:
-                              const Color.fromARGB(255, 21, 0, 255),
-                          imagePath: 'assets/image/Rang.png',
-                          text: 'Răng',
-                          textColor: Colors.white,
-                        ),
-                        SizedBox(width: 10),
-                        // danh muc bac si tim
-                        CategoryWidget(
-                          backgroundColor:
-                              const Color.fromARGB(255, 21, 0, 255),
-                          imagePath: 'assets/image/Tim.png',
-                          text: 'Tim',
-                          textColor: Colors.white,
-                        ),
-                        SizedBox(width: 10),
-                        //danh muc bac si than the
-                        CategoryWidget(
-                          backgroundColor:
-                              const Color.fromARGB(255, 21, 0, 255),
-                          imagePath: 'assets/image/CoThe.png',
-                          text: 'Cơ Thể',
-                          textColor: Colors.white,
-                        ),
-                      ],
-                    ),
-                  )),
-              // danh sach bac si trong lich
-              Text(
-                'Danh Sách Bác Sĩ Trống Lịch',
-                style: TextStyle(
-                    color: Colors.indigo,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20),
-                textAlign: TextAlign.center,
-              ),
-              Container(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          CategoryDoctorWidget(
-                            imagePath: 'assets/image/bacsi02.png',
-                            textDoctor: 'Bác Sĩ Phương',
-                            textSpecialty: 'Chuyên Khoa Răng',
-                            backgroundColor: Colors.white,
-                            textColor: Colors.black,
-                            containerWidth: screenWidth * 0.4,
-                            containerHeight: screenHeight * 0.3,
-                            topLeft: 25,
-                            topRight: 25,
-                            boderRadiusBox: 25,
-                            boderRadiusAvt: 0,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                '/doctorDetail',
-                              );
-                            },
-                          ),
-                          SizedBox(width: 10),
-                          CategoryDoctorWidget(
-                            imagePath: 'assets/image/BacSi01.png',
-                            textDoctor: 'Bác Sĩ Thuý',
-                            textSpecialty: 'Chuyên Khoa Tim',
-                            backgroundColor: Colors.white,
-                            textColor: Colors.black,
-                            containerWidth: screenWidth * 0.4,
-                            containerHeight: screenHeight * 0.3,
-                            topLeft: 25,
-                            topRight: 25,
-                            boderRadiusBox: 25,
-                            boderRadiusAvt: 0,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                '/doctorDetail',
-                              );
-                            },
-                          ),
-                          SizedBox(width: 10),
-                          CategoryDoctorWidget(
-                            imagePath: 'assets/image/bacsi02.png',
-                            textDoctor: 'Bác Sĩ Phương',
-                            textSpecialty: 'Chuyên Khoa Răng',
-                            backgroundColor: Colors.white,
-                            textColor: Colors.black,
-                            containerWidth: screenWidth * 0.4,
-                            containerHeight: screenHeight * 0.3,
-                            topLeft: 25,
-                            topRight: 25,
-                            boderRadiusBox: 25,
-                             boderRadiusAvt: 0,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                '/doctorDetail',
-                              );
-                            },
-                          ),
-                          SizedBox(width: 10),
-                          CategoryDoctorWidget(
-                            imagePath: 'assets/image/bacsi02.png',
-                            textDoctor: 'Bác Sĩ Phương',
-                            textSpecialty: 'Chuyên Khoa Răng',
-                            backgroundColor: Colors.white,
-                            textColor: Colors.black,
-                            containerWidth: screenWidth * 0.4,
-                            containerHeight: screenHeight * 0.3,
-                            topLeft: 25,
-                            topRight: 25,
-                            boderRadiusBox: 25,
-                             boderRadiusAvt: 0,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                '/doctorDetail',
-                              );
-                            },
-                          ),
-                        ]),
-                  )),
-              // danh sach bac si yeu thich
-              // danh sach bac si trong lich
-              Text(
-                'Danh Sách Bác Sĩ Yêu Thích',
-                style: TextStyle(
-                    color: Colors.indigo,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20),
-                textAlign: TextAlign.center,
-              ),
-              Container(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          CategoryDoctorWidget(
-                            imagePath: 'assets/image/avatabacsi.png',
-                            textDoctor: 'Bác Sĩ Phương',
-                            textSpecialty: 'Chuyên Khoa Răng',
-                            backgroundColor: Colors.white,
-                            textColor: Colors.black,
-                            containerWidth: screenWidth * 0.4,
-                            containerHeight: screenHeight * 0.3,
-                             topLeft: 25,
-                            topRight: 25,
-                            boderRadiusAvt: 0,
-                            boderRadiusBox: 25,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                '/doctorDetail',
-                              );
-                            },
-                          ),
-                          SizedBox(width: 10),
-                           CategoryDoctorWidget(
-                            imagePath: 'assets/image/avatabacsi.png',
-                            textDoctor: 'Bác Sĩ Phương',
-                            textSpecialty: 'Chuyên Khoa Răng',
-                            backgroundColor: Colors.white,
-                            textColor: Colors.black,
-                            containerWidth: screenWidth * 0.4,
-                            containerHeight: screenHeight * 0.3,
-                             topLeft: 25,
-                            topRight: 25,
-                            boderRadiusAvt: 0,
-                            boderRadiusBox: 25,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                '/doctorDetail',
-                              );
-                            },
-                          ),
-                          SizedBox(width: 10),
-                           CategoryDoctorWidget(
-                            imagePath: 'assets/image/avatabacsi.png',
-                            textDoctor: 'Bác Sĩ Phương',
-                            textSpecialty: 'Chuyên Khoa Răng',
-                            backgroundColor: Colors.white,
-                            textColor: Colors.black,
-                            containerWidth: screenWidth * 0.4,
-                            containerHeight: screenHeight * 0.3,
-                             topLeft: 25,
-                            topRight: 25,
-                            boderRadiusAvt: 0,
-                            boderRadiusBox: 25,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                '/doctorDetail',
-                              );
-                            },
-                          ),
-                        ]),
-                  ))
-            ]),
-          ),
+        body: 
+        IndexedStack(
+          index: _selectedIndex,
+          children: _screens,
         ),
+        // footer app
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -425,6 +178,7 @@ class _HomeState extends State<Home> {
                 BottomNavigationBarItem(
                   icon: _buildIcon(Icons.home, 0),
                   label: 'Home',
+                  
                 ),
                 BottomNavigationBarItem(
                   icon: _buildIcon(Icons.favorite, 1),
