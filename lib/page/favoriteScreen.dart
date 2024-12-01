@@ -137,7 +137,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                             onTap: () {
                               Navigator.pushNamed(
                                 context,
-                                '/doctorDetail',
+                                '/doctordetail',
                               );
                             },
                           ),

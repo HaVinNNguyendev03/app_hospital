@@ -171,7 +171,12 @@ class RatingDoctorWidget extends StatelessWidget {
                       paddingvertical: 0.2,
                       height: containerHeight * 0.2,
                       width: containerWidth * 0.3,
-                      onPressed: () {},
+                      onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/doctordetail',
+                              );
+                            },
                     )
                   ],
                 ),

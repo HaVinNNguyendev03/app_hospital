@@ -1,3 +1,4 @@
+import 'package:app_hospital/widget/FavoriteDoctorWidget.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:app_hospital/widget/CategoryDoctorWidget.dart';
@@ -29,10 +30,12 @@ class Homescreen extends StatefulWidget {
 
 
 /// State for widget Homescreen.
-class _HomescreenState extends State<Homescreen> {
+  class _HomescreenState extends State<Homescreen> {
+  // khai báo 
   late FocusNode myFocusNode;
   /* #region Lifecycle */
   @override
+  //khởi tạo
   void initState() {
     super.initState();
      myFocusNode = FocusNode();
@@ -53,6 +56,7 @@ class _HomescreenState extends State<Homescreen> {
   }
   
   @override
+  // hủy 
   void dispose() {
     // Permanent removal of a tree stent
     myFocusNode.dispose();
@@ -63,7 +67,7 @@ class _HomescreenState extends State<Homescreen> {
   
   @override
   Widget build(BuildContext context) {
-    // khai bao cac thuoc tinh
+    // khoi tao cac thuoc tinh
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     return GestureDetector(
@@ -250,7 +254,6 @@ class _HomescreenState extends State<Homescreen> {
                         ]),
                   )),
               // danh sach bac si yeu thich
-              // danh sach bac si trong lich
               Text(
                 'Danh Sách Bác Sĩ Yêu Thích',
                 style: TextStyle(
@@ -267,7 +270,7 @@ class _HomescreenState extends State<Homescreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          CategoryDoctorWidget(
+                          FavoriteDoctorWidget(
                             imagePath: 'assets/image/avatabacsi.png',
                             textDoctor: 'Bác Sĩ Phương',
                             textSpecialty: 'Chuyên Khoa Răng',
@@ -285,6 +288,28 @@ class _HomescreenState extends State<Homescreen> {
                                 '/doctorDetail',
                               );
                             },
+                           
+                          ),
+                          SizedBox(width: 10),
+                            FavoriteDoctorWidget(
+                            imagePath: 'assets/image/avatabacsi.png',
+                            textDoctor: 'Bác Sĩ Phương',
+                            textSpecialty: 'Chuyên Khoa Răng',
+                            backgroundColor: Colors.white,
+                            textColor: Colors.black,
+                            containerWidth: screenWidth * 0.4,
+                            containerHeight: screenHeight * 0.3,
+                             topLeft: 25,
+                            topRight: 25,
+                            boderRadiusAvt: 0,
+                            boderRadiusBox: 25,
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/doctorDetail',  
+                              );
+                            },
+                           
                           ),
                           SizedBox(width: 10),
                            CategoryDoctorWidget(
@@ -307,7 +332,7 @@ class _HomescreenState extends State<Homescreen> {
                             },
                           ),
                           SizedBox(width: 10),
-                           CategoryDoctorWidget(
+                          FavoriteDoctorWidget(
                             imagePath: 'assets/image/avatabacsi.png',
                             textDoctor: 'Bác Sĩ Phương',
                             textSpecialty: 'Chuyên Khoa Răng',
@@ -325,7 +350,8 @@ class _HomescreenState extends State<Homescreen> {
                                 '/doctorDetail',
                               );
                             },
-                          ),
+                           
+                          )
                         ]),
                   ))
             ]),

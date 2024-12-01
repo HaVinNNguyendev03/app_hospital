@@ -1,5 +1,6 @@
 import 'package:app_hospital/log/SimpleFileLogger.dart';
 import 'package:app_hospital/page/DoctorSignup.dart';
+import 'package:app_hospital/page/doctordetail.dart';
 import 'package:app_hospital/page/intro2.dart';
 import 'package:app_hospital/widget/RatingDetail.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +52,7 @@ class MyApp extends StatelessWidget {
         '/verifyOtp': (context) => verifyOtp(),
         '/success': (context) => Success(),
         '/doctorsigup'  : (context) => DoctorSignup(),
+        '/doctordetail' : (context) => DoctorDetail(),
       },
        theme: AppTheme.themeData,
        home: Intro1(),

@@ -63,7 +63,6 @@ class CategoryDoctorWidget extends StatelessWidget {
             Container(
               width: containerWidth,
               height: containerHeight / 4.2, 
-             
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,

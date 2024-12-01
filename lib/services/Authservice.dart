@@ -15,12 +15,15 @@ import 'package:http/http.dart' as http;
 import 'dart:math';
 
 class AuthService implements Authbase {
+  // khởi instance _firebaseAuth
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  // khởi instance _googleSignIn
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  // khởi tạo thuộc tính cho service phone 
    final String twilioSid = dotenv.env['TWILIO_SID']!;
   final String twilioAuthToken = dotenv.env['TWILIO_AUTH_TOKEN']!;
   final String twilioPhoneNumber = dotenv.env['TWILIO_PHONE_NUMBER']!;
-
+  // chuyển sdt đầu 0 thành +84
   String formatPhoneNumber(String phone) {
     if (phone.startsWith('0')) {
       // Thay đầu số 0 bằng mã quốc gia Việt Nam (+84)
@@ -39,7 +42,6 @@ class AuthService implements Authbase {
   //
   /// Hiển thị SnackBar thành công hay thất bại.
   ///
-  /// Returns a string error if the sign up process fails.
   ///
   Future<String?> signUpWithGoogle(BuildContext context) async {
     try {
