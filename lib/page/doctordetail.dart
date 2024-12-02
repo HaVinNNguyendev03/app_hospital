@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:app_hospital/theme.dart';
 import 'package:app_hospital/services/Authservice.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+
 String formatNumber(int number) {
   if (number >= 1000000000) {
     return '${(number / 1000000000).toStringAsFixed(1)} Tỷ'; // Hàng tỷ
@@ -16,6 +18,7 @@ String formatNumber(int number) {
     return number.toString(); // Số nhỏ hơn 1000 giữ nguyên
   }
 }
+
 /// {@template DoctorDetail}
 /// DoctorDetail widget.
 /// {@endtemplate}
@@ -227,20 +230,31 @@ class _DoctorDetailState extends State<DoctorDetail> {
                               ),
                             ],
                           ),
-                          child: Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                buildInfoBox("500 Năm", "Kinh Nghiệm"),
-                                buildInfoBox(formatNumber(2100000), "Lượt Khám"),
-                                buildInfoBox(formatNumber(1110000), "Đánh giá"),
-                              ],
-                            ),
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              double boxWidth = constraints.maxWidth / 3 -
+                                  5; // Chia đều không gian cho mỗi box
+                              return Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Expanded(
+                                      child: buildInfoBox(
+                                          "500 Năm", "Kinh Nghiệm", boxWidth)),
+                                  Expanded(
+                                      child: buildInfoBox(formatNumber(2100000),
+                                          "Lượt Khám", boxWidth)),
+                                  Expanded(
+                                      child: buildInfoBox(formatNumber(1110000),
+                                          "Đánh giá", boxWidth)),
+                                ],
+                              );
+                            },
                           ),
                         ),
                         const SizedBox(height: 20),
                         // Danh sách dịch vụ
-                        Column( 
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -276,8 +290,7 @@ class _DoctorDetailState extends State<DoctorDetail> {
                             ),
                           ),
                           onPressed: () {
-                            // Hành động khi nhấn nút
-                            print("Đặt lịch ngay");
+                            Navigator.pushNamed(context, '/bookcalender');
                           },
                           child: Text(
                             "Đặt Lịch Ngay",
@@ -298,10 +311,11 @@ class _DoctorDetailState extends State<DoctorDetail> {
       ),
     );
   }
-  // widget thông tin về chất lượng bác sĩ
-  Widget buildInfoBox(String value, String label) {
-    
+
+  // widget thông tin về chất lượng,đánh giá bác sĩ
+  Widget buildInfoBox(String value, String label, double width) {
     return Container(
+      width: width,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.grey[100],
@@ -311,17 +325,20 @@ class _DoctorDetailState extends State<DoctorDetail> {
         children: [
           Text(
             value,
+            textAlign: TextAlign.center,
             style: GoogleFonts.roboto(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
-          Text(
+          AutoSizeText(
             label,
+            textAlign: TextAlign.center,
             style: GoogleFonts.roboto(
               fontSize: 14,
               color: Colors.grey[600],
             ),
+            maxLines: 1,
           ),
         ],
       ),

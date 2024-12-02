@@ -53,8 +53,7 @@ class _ButtonwidgetState extends State<Buttonwidget> {
   
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
+   
     return Container(
       height: widget.height,
       width: widget.width,

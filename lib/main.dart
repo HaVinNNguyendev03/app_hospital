@@ -1,7 +1,9 @@
 import 'package:app_hospital/log/SimpleFileLogger.dart';
 import 'package:app_hospital/page/DoctorSignup.dart';
+import 'package:app_hospital/page/bookCalendar.dart';
 import 'package:app_hospital/page/doctordetail.dart';
 import 'package:app_hospital/page/intro2.dart';
+import 'package:app_hospital/provider/UserProvider.dart';
 import 'package:app_hospital/widget/RatingDetail.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,6 +20,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
    await Future.delayed(const Duration(seconds: 5)); 
@@ -34,7 +37,13 @@ Future main() async {
 
   fileLogger.log("This is an info log", Level.info);
   fileLogger.log("This is an error log", Level.error);
-  runApp(MyApp());
+  runApp( MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -53,12 +62,14 @@ class MyApp extends StatelessWidget {
         '/success': (context) => Success(),
         '/doctorsigup'  : (context) => DoctorSignup(),
         '/doctordetail' : (context) => DoctorDetail(),
+        '/bookcalender' : (context) => BookCalendar(),
       },
        theme: AppTheme.themeData,
        home: Intro1(),
     );
   }
 }
+
 class GradientBackground extends StatelessWidget {
   final Widget child;
 

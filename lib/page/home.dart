@@ -1,3 +1,4 @@
+import 'package:app_hospital/provider/UserProvider.dart';
 import 'package:app_hospital/widget/CategoryDoctorWidget.dart';
 import 'package:app_hospital/widget/CategoryWidget.dart';
 import 'package:flutter/widgets.dart';
@@ -9,6 +10,7 @@ import 'package:app_hospital/page/homescreen.dart';
 import 'package:app_hospital/page/favoriteScreen.dart';
 import 'package:app_hospital/page/bookScreen.dart';
 import 'package:app_hospital/page/userScreen.dart';
+import 'package:provider/provider.dart';
 
 AuthService authService = new AuthService();
 
@@ -79,8 +81,8 @@ final List<Widget> _screens = [
     print(appBarHeight);
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    final Map<String, dynamic> userData =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+     // Lấy dữ liệu từ UserProvider
+    final userProvider = Provider.of<UserProvider>(context);
     return Container(
       height: screenHeight,
       width: screenWidth,
@@ -130,7 +132,8 @@ final List<Widget> _screens = [
                                 onPressed: () {},
                               ),
                             ),
-                            Text('Xin Chào: ${userData['name']}'),
+                             // Hiển thị thông tin người dùng từ UserProvider
+                            Text('Xin Chào: ${userProvider.name ?? "Người dùng"}'),
                             IconButton(
                               icon: Icon(Icons.logout),
                               onPressed: () {

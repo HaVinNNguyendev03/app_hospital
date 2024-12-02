@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:app_hospital/model/Doctor.dart';
+import 'package:app_hospital/provider/UserProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:app_hospital/utils/authbase.dart';
@@ -13,6 +14,8 @@ import 'package:app_hospital/model/User.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math';
+
+import 'package:provider/provider.dart';
 
 class AuthService implements Authbase {
   // khởi instance _firebaseAuth
@@ -278,22 +281,22 @@ class AuthService implements Authbase {
   /// một thông báo lỗi nếu có lỗi xảy ra.
   ///
   /// Ngoài ra, còn trả về một thông báo nếu người dùng chưa xác minh email.
-  Future<String?> loginWithEmail(
+ Future<String?> loginWithEmail(
     BuildContext context, String email, String password) async {
   try {
-    // Đăng nhập Firebase
+    // Đăng nhập Firebase với email và mật khẩu
     UserCredential userCredential = await _firebaseAuth
         .signInWithEmailAndPassword(email: email, password: password);
 
-    // Tìm trong `Users` collection
+    // Tìm thông tin người dùng trong collection `Users`
     QuerySnapshot userSnapshot = await FirebaseFirestore.instance
-        .collection('Users') // Chỉ truy vấn `Users`
+        .collection('Users')
         .where('email', isEqualTo: email)
         .limit(1)
         .get();
 
     if (userSnapshot.docs.isEmpty) {
-      // Nếu không tìm thấy trong `Users`, tìm trong `Doctors`
+      // Nếu không tìm thấy trong `Users`, kiểm tra trong `Doctors`
       QuerySnapshot doctorSnapshot = await FirebaseFirestore.instance
           .collection('Doctors')
           .where('email', isEqualTo: email)
@@ -301,10 +304,11 @@ class AuthService implements Authbase {
           .get();
 
       if (doctorSnapshot.docs.isEmpty) {
+        // Không tìm thấy cả trong `Users` và `Doctors`
         return "Không tìm thấy tài khoản. Vui lòng kiểm tra email.";
       }
 
-      // Xử lý thông tin người dùng trong `Doctors`
+      // Xử lý thông tin từ `Doctors`
       DocumentSnapshot doctorDoc = doctorSnapshot.docs.first;
       bool isEmailVerified = doctorDoc.get('isEmailVerified') ?? false;
 
@@ -312,17 +316,19 @@ class AuthService implements Authbase {
         return "Email chưa được xác minh. Vui lòng xác minh email trước khi đăng nhập.";
       }
 
+      // Lưu thông tin vào UserProvider
+      Provider.of<UserProvider>(context, listen: false).setUser(
+        doctorDoc.get('email'),
+        doctorDoc.get('name'),
+        doctorDoc.get('role'), // Role là bác sĩ
+      );
+
       // Chuyển hướng tới trang dành cho bác sĩ
-      Navigator.pushReplacementNamed(context, '/homepage', arguments: {
-        'email': doctorDoc.get('email'),
-        'name': doctorDoc.get('name'),
-        'specialization': doctorDoc.get('specialization'),
-        'experience': doctorDoc.get('experience'),
-      });
-      return null; // Thành công
+      Navigator.pushReplacementNamed(context, '/homepage');
+      return null; // Đăng nhập thành công
     }
 
-    // Xử lý thông tin người dùng trong `Users`
+    // Xử lý thông tin từ `Users`
     DocumentSnapshot userDoc = userSnapshot.docs.first;
     bool isEmailVerified = userDoc.get('isEmailVerified') ?? false;
 
@@ -330,16 +336,23 @@ class AuthService implements Authbase {
       return "Email chưa được xác minh. Vui lòng xác minh email trước khi đăng nhập.";
     }
 
+    // Lưu thông tin vào UserProvider
+    Provider.of<UserProvider>(context, listen: false).setUser(
+      userDoc.get('email'),
+      userDoc.get('name'),
+      userDoc.get('role'), // Role là người dùng
+    );
+
     // Chuyển hướng tới trang dành cho người dùng
-    Navigator.pushReplacementNamed(context, '/homepage', arguments: {
-      'email': userDoc.get('email'),
-      'name': userDoc.get('name'),
-    });
-    return null; // Thành công
+    Navigator.pushReplacementNamed(context, '/homepage');
+    return null; // Đăng nhập thành công
   } catch (e) {
-    return "Đăng nhập Email thất bại: $e";
+    // Xử lý lỗi và ghi log
+    print("Lỗi đăng nhập với email: $e");
+    return "Đăng nhập Email thất bại. Vui lòng thử lại.";
   }
 }
+
 
 
 
